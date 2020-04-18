@@ -9,23 +9,50 @@ public class PasswordValidator {
         blackListPasswords.add("/Qwerty123");
     }
 
-    public Integer GetSecurityPercentage(String password) {
+    public PasswordResult getSecurityPercentage(String password) {
+        PasswordResult result = new PasswordResult();
         Integer securityLvl = 0;
+        boolean match = false;
 
-        securityLvl += getBoolAsNum(hasNumbers(password));
-        securityLvl += getBoolAsNum(hasCharacters(password));
-        securityLvl += getBoolAsNum(hasLowercase(password));
-        securityLvl += getBoolAsNum(hasUpperCase(password));
-        securityLvl += getBoolAsNum(hasSymbols(password));
-        securityLvl += getBoolAsNum(hasGoodMinLength(password));
-        securityLvl += getBoolAsNum(hasGoodMaxLength(password));
-        securityLvl += getBoolAsNum(isNotOnOfBlackList(password));
+        match = hasNumbers(password);
+        securityLvl += getBoolAsNum(match);
+        addFail(match, result, "La contrasena debe contener números.");
 
-        return securityLvl;
+        match = hasCharacters(password);
+        securityLvl += getBoolAsNum(match);
+        addFail(match, result, "La contrasena debe contener caracteres alfabéticos.");
+
+        match = hasLowercase(password);
+        securityLvl += getBoolAsNum(match);
+        addFail(match, result, "La contrasena debe contener caracteres en minúscula.");
+
+        match = hasUpperCase(password);
+        securityLvl += getBoolAsNum(match);
+        addFail(match, result, "La contrasena debe contener caracteres en mayúscula.");
+
+        match = hasSymbols(password);
+        securityLvl += getBoolAsNum(match);
+        addFail(match, result, "La contrasena debe contener símbolos.");
+
+        match = hasGoodMinLength(password);
+        securityLvl += getBoolAsNum(match);
+        addFail(match, result, "La contrasena debe ser mínimo de 8 caracteres.");
+
+        match = hasGoodMaxLength(password);
+        securityLvl += getBoolAsNum(match);
+        addFail(match, result, "La contrasena debe ser mínimo de 128 caracteres.");
+
+        match = isNotOnOfBlackList(password);
+        securityLvl += getBoolAsNum(match);
+        addFail(match, result, "La contrasena es muy común, por favor, elija otra.");
+
+        result.setSecurityLevel(securityLvl);
+
+        return result;
     }
 
     public boolean hasNumbers(final String password) {
-        return password.matches(".+[0-9].*");
+        return password.matches(".*\\d.*");
     }
 
     public boolean hasCharacters(final String password) {
@@ -61,5 +88,11 @@ public class PasswordValidator {
             return 1;
         }
         return 0;
+    }
+
+    private void addFail(boolean match, PasswordResult result, String fail) {
+        if(!match) {
+            result.addFail(fail);
+        }
     }
 }
