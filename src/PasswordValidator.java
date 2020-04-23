@@ -4,7 +4,7 @@ import java.util.List;
 
 public class PasswordValidator {
     // TODO: CHANGE BLACK LIST PASSWORD IMPLEMENTATION
-    private static List<String> blackListPasswords = new ArrayList<>();
+    private static List<String> blackListPasswords = new ArrayList<>(Arrays.asList("/Qwerty123", "password", "contraseña", "123456789"));
 
     private static List<PasswordValidation> validationsToExecute =
             new ArrayList<>(
@@ -21,7 +21,6 @@ public class PasswordValidator {
             );
 
     public PasswordValidator() {
-        blackListPasswords.add("/Qwerty123");
     }
 
     public PasswordResult getSecurityPercentage(final String password) {
@@ -42,10 +41,7 @@ public class PasswordValidator {
     }
 
     private Integer getBoolAsNum(boolean value) {
-        if (value) {
-            return 1;
-        }
-        return 0;
+        return (value) ? 1 : 0;
     }
 
     private void addFail(boolean match, PasswordResult result, String fail) {
