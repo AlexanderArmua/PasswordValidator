@@ -1,86 +1,44 @@
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 public class PasswordValidator {
     // TODO: CHANGE BLACK LIST PASSWORD IMPLEMENTATION
     private static List<String> blackListPasswords = new ArrayList<>();
 
+    private static List<PasswordValidation> validationsToExecute =
+            new ArrayList<>(
+                    Arrays.asList(
+                            new PasswordValidationRegex("La contrasena debe contener números.", ".*\\d.*"),
+                            new PasswordValidationRegex("La contrasena debe contener caracteres alfabéticos.", ".+[A-z].*"),
+                            new PasswordValidationRegex("La contrasena debe contener caracteres en minúscula.", ".+[a-z].*"),
+                            new PasswordValidationRegex("La contrasena debe contener caracteres en mayúscula.", ".+[A-Z].*"),
+                            new PasswordValidationRegex("La contrasena debe contener símbolos.", "[^\\w\\s].*"),
+                            new PasswordValidationFunc("La contrasena debe ser mínimo de 8 caracteres.", pass -> pass.length() >= 8),
+                            new PasswordValidationFunc("La contrasena debe ser mínimo de 128 caracteres.", pass -> pass.length() <= 128),
+                            new PasswordValidationFunc("La contrasena debe ser mínimo de 8 caracteres.", pass -> !blackListPasswords.contains(pass))
+                    )
+            );
+
     public PasswordValidator() {
         blackListPasswords.add("/Qwerty123");
     }
 
-    public PasswordResult getSecurityPercentage(String password) {
-        PasswordResult result = new PasswordResult();
+    public PasswordResult getSecurityPercentage(final String password) {
+        final PasswordResult result = new PasswordResult();
         Integer securityLvl = 0;
-        boolean match = false;
 
-        match = hasNumbers(password);
-        securityLvl += getBoolAsNum(match);
-        addFail(match, result, "La contrasena debe contener números.");
+        for (PasswordValidation validation : validationsToExecute) {
+            boolean match = validation.passwordMatches(password);
 
-        match = hasCharacters(password);
-        securityLvl += getBoolAsNum(match);
-        addFail(match, result, "La contrasena debe contener caracteres alfabéticos.");
+            securityLvl += getBoolAsNum(match);
 
-        match = hasLowercase(password);
-        securityLvl += getBoolAsNum(match);
-        addFail(match, result, "La contrasena debe contener caracteres en minúscula.");
-
-        match = hasUpperCase(password);
-        securityLvl += getBoolAsNum(match);
-        addFail(match, result, "La contrasena debe contener caracteres en mayúscula.");
-
-        match = hasSymbols(password);
-        securityLvl += getBoolAsNum(match);
-        addFail(match, result, "La contrasena debe contener símbolos.");
-
-        match = hasGoodMinLength(password);
-        securityLvl += getBoolAsNum(match);
-        addFail(match, result, "La contrasena debe ser mínimo de 8 caracteres.");
-
-        match = hasGoodMaxLength(password);
-        securityLvl += getBoolAsNum(match);
-        addFail(match, result, "La contrasena debe ser mínimo de 128 caracteres.");
-
-        match = isNotOnOfBlackList(password);
-        securityLvl += getBoolAsNum(match);
-        addFail(match, result, "La contrasena es muy común, por favor, elija otra.");
+            addFail(match, result, validation.getFailText());
+        }
 
         result.setSecurityLevel(securityLvl);
 
         return result;
-    }
-
-    public boolean hasNumbers(final String password) {
-        return password.matches(".*\\d.*");
-    }
-
-    public boolean hasCharacters(final String password) {
-        return password.matches(".+[A-z].*");
-    }
-
-    public boolean hasLowercase(final String password) {
-        return password.matches(".+[a-z].*");
-    }
-
-    public boolean hasUpperCase(final String password) {
-        return password.matches(".+[A-Z].*");
-    }
-
-    public boolean hasSymbols(final String password) {
-        return password.matches("[^\\w\\s].*");
-    }
-
-    public boolean hasGoodMinLength(final String password) {
-        return password.length() >= 8;
-    }
-
-    public boolean hasGoodMaxLength(final String password) {
-        return password.length() <= 128;
-    }
-
-    public boolean isNotOnOfBlackList(final String password) {
-        return !blackListPasswords.contains(password);
     }
 
     private Integer getBoolAsNum(boolean value) {
