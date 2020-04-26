@@ -9,7 +9,7 @@ public class CreatePassword {
         String enteredPassword = scanner.nextLine();
 
         PasswordResult passwordResult= validador.getSecurityPercentage(enteredPassword);
-        System.out.println("El nivel de seguridad de su password es del: " + (passwordResult.getSecurityLevel() * 100 / 8) + "%" );
+        System.out.println("El nivel de seguridad de su password es del: " + (passwordResult.getSecurityLevel() * 100 / PasswordValidator.getValidationsToExecute().size()) + "%" );
         passwordResult.getSecurityFails().stream().forEach(fail -> System.out.println(fail));
     }
 

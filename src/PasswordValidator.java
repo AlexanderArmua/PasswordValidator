@@ -10,13 +10,13 @@ public class PasswordValidator {
             new ArrayList<>(
                     Arrays.asList(
                             new PasswordValidationRegex("La contrasena debe contener números.", ".*\\d.*"),
-                            new PasswordValidationRegex("La contrasena debe contener caracteres alfabéticos.", ".+[A-z].*"),
-                            new PasswordValidationRegex("La contrasena debe contener caracteres en minúscula.", ".+[a-z].*"),
-                            new PasswordValidationRegex("La contrasena debe contener caracteres en mayúscula.", ".+[A-Z].*"),
-                            new PasswordValidationRegex("La contrasena debe contener símbolos.", "[^\\w\\s].*"),
+                            new PasswordValidationRegex("La contrasena debe contener caracteres alfabéticos.", ".*[A-z].*"),
+                            new PasswordValidationRegex("La contrasena debe contener caracteres en minúscula.", ".*[a-z].*"),
+                            new PasswordValidationRegex("La contrasena debe contener caracteres en mayúscula.", ".*[A-Z].*"),
+                            new PasswordValidationRegex("La contrasena debe contener símbolos.", ".*[^\\w\\s].*"),
                             new PasswordValidationFunc("La contrasena debe ser mínimo de 8 caracteres.", pass -> pass.length() >= 8),
                             new PasswordValidationFunc("La contrasena debe ser mínimo de 128 caracteres.", pass -> pass.length() <= 128),
-                            new PasswordValidationFunc("La contrasena debe ser mínimo de 8 caracteres.", pass -> !blackListPasswords.contains(pass))
+                            new PasswordValidationFunc("La contrasena es muy común, por favor, elija otra.", pass -> !blackListPasswords.contains(pass))
                     )
             );
 
@@ -48,5 +48,21 @@ public class PasswordValidator {
         if(!match) {
             result.addFail(fail);
         }
+    }
+
+    public static List<PasswordValidation> getValidationsToExecute() {
+        return validationsToExecute;
+    }
+
+    public static void setValidationsToExecute(List<PasswordValidation> validationsToExecute) {
+        PasswordValidator.validationsToExecute = validationsToExecute;
+    }
+
+    public static List<String> getBlackListPasswords() {
+        return blackListPasswords;
+    }
+
+    public static void setBlackListPasswords(List<String> blackListPasswords) {
+        PasswordValidator.blackListPasswords = blackListPasswords;
     }
 }
