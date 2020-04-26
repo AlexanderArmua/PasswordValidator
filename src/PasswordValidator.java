@@ -1,10 +1,14 @@
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 public class PasswordValidator {
-    // TODO: CHANGE BLACK LIST PASSWORD IMPLEMENTATION
-    private static List<String> blackListPasswords = new ArrayList<>(Arrays.asList("/Qwerty123", "password", "contraseña", "123456789"));
+
+    private static Set<String> blackListPasswords = new HashSet<>(
+        Arrays.asList("/Qwerty123", "password", "contraseña", "123456789")
+    );
 
     private static List<PasswordValidation> validationsToExecute =
             new ArrayList<>(
